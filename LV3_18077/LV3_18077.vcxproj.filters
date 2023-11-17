@@ -101,5 +101,32 @@
     <Image Include="C:\Users\Korisnik\Desktop\BITBAPE\p7.dib" />
     <Image Include="C:\Users\Korisnik\Desktop\BITBAPE\p8.dib" />
     <Image Include="C:\Users\Korisnik\Desktop\BITBAPE\p9.dib" />
+    <Image Include="res\pz1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz2.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz3.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz4.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz5.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz6.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz7.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz8.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pz9.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

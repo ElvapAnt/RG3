@@ -16,6 +16,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+#include <vector>
 
 
 // CLV318077View
@@ -34,15 +35,15 @@ END_MESSAGE_MAP()
 CLV318077View::CLV318077View() noexcept
 {
 	// TODO: add construction code here
-	m_puzzlePiece1.Load(CString("./res/p1.dib"));
-	m_puzzlePiece2.Load(CString("./res/p2.dib"));
-	m_puzzlePiece3.Load(CString("./res/p3.dib"));
-	m_puzzlePiece4.Load(CString("./res/p4.dib"));
-	m_puzzlePiece5.Load(CString("./res/p5.dib"));
-	m_puzzlePiece6.Load(CString("./res/p6.dib"));
-	m_puzzlePiece7.Load(CString("./res/p7.dib"));
-	m_puzzlePiece8.Load(CString("./res/p8.dib"));
-	m_puzzlePiece9.Load(CString("./res/p9.dib"));
+	m_puzzlePiece1.Load(CString("./res/pz1.bmp"));
+	m_puzzlePiece2.Load(CString("./res/pz2.bmp"));
+	m_puzzlePiece3.Load(CString("./res/pz3.bmp"));
+	m_puzzlePiece4.Load(CString("./res/pz4.bmp"));
+	m_puzzlePiece5.Load(CString("./res/pz5.bmp"));
+	m_puzzlePiece6.Load(CString("./res/pz6.bmp"));
+	m_puzzlePiece7.Load(CString("./res/pz7.bmp"));
+	m_puzzlePiece8.Load(CString("./res/pz8.bmp"));
+	m_puzzlePiece9.Load(CString("./res/pz9.bmp"));
 
 }
 
@@ -66,7 +67,6 @@ void CLV318077View::OnDraw(CDC* pDC)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-
 	DrawPuzzle(pDC);
 }
 
@@ -143,15 +143,21 @@ void CLV318077View::DrawPuzzlePiece(CDC* pDC, DImage& img, const CPoint& positio
 	Mirror(pDC, mirrorX, mirrorY, false);
 	Rotate(pDC, angle, false);
 
-	CBitmap* bmpImg = img.GetBitmap();
-	GrayscaleFilter(bmpImg, isBlue);
-	CBitmap* mask = TransparentMask(pDC, bmpImg, width, height);
 	CDC memDC;
 	memDC.CreateCompatibleDC(pDC);
+	CBitmap bmpImg;
+	bmpImg.CreateCompatibleBitmap(pDC, img.Width(), img.Height());
+	CBitmap* pOldBmp = memDC.SelectObject(&bmpImg);
+	img.Draw(&memDC, CRect(0, 0, img.Width(), img.Height()), CRect(0, 0, img.Width(), img.Height()));
+	memDC.SelectObject(pOldBmp);
+	//CBitmap *bmpImg = img.GetBitmap();
+	GrayscaleFilter(&bmpImg, isBlue);
+	CBitmap* mask = TransparentMask(pDC, &bmpImg, width, height);
 
-	CBitmap* pOldBmp = memDC.SelectObject(mask);
+	pOldBmp = memDC.SelectObject(mask);
 	pDC->BitBlt(-width/2 + 3, -height/2 - 10, width, height, &memDC, 0, 0, SRCAND);
-	memDC.SelectObject(bmpImg);
+
+	memDC.SelectObject(&bmpImg);
 	pDC->BitBlt(-width / 2 + 3, -height / 2 - 10, width, height, &memDC, 0, 0, SRCPAINT);
 
 	memDC.SelectObject(pOldBmp);
@@ -201,6 +207,8 @@ void CLV318077View::GrayscaleFilter(CBitmap* pBitmap, bool isBlue)
 }
 void CLV318077View::DrawGrid(CDC* pDC)
 {
+	CPen pen(PS_SOLID, 2, RGB(128, 128, 128));
+	CPen* oldPen = pDC->SelectObject(&pen);
 	const int gridSize = 25;
 	const int width = 500;
 	const int height = 500;
@@ -216,40 +224,42 @@ void CLV318077View::DrawGrid(CDC* pDC)
 		pDC->MoveTo(0, y);
 		pDC->LineTo(width, y);
 	}
+
+	pDC->SelectObject(oldPen);
 }
 void CLV318077View::DrawPuzzle(CDC* pDC)
 {
-	// Create a memory DC for double buffering
-
 	CDC* memDC = new CDC();
 	(*memDC).CreateCompatibleDC(pDC);
 	CBitmap bitmap;
 	bitmap.CreateCompatibleBitmap(pDC, 500, 500);
 	CBitmap* pOldBitmap = (*memDC).SelectObject(&bitmap);
-
 	CBrush bgBrush(RGB(255, 255, 255)); 
 	CRect rc(0, 0, 500, 500);
 	(*memDC).FillRect(rc, &bgBrush);
 	DrawGrid(memDC);
 
-	// Now draw each puzzle piece onto the memory DC
-	DrawPuzzlePiece(memDC, m_puzzlePiece1, CPoint(100, 100), -155, 1, 1, true, false);
-	DrawPuzzlePiece(memDC, m_puzzlePiece7, CPoint(250, 100), -125, 1, 1, true, false);
-	DrawPuzzlePiece(memDC, m_puzzlePiece5, CPoint(400, 100), -76, 1, 1, true, false);
+	int savedDC = pDC->SaveDC();
+	pDC->SetGraphicsMode(GM_ADVANCED);
+	Translate(pDC, -250, -250, true);
+	Rotate(pDC, 180, true);
+	Translate(pDC, 250, 250, true);
+	
+	DrawPuzzlePiece(memDC, m_puzzlePiece1, CPoint(100, 100), -202, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece7, CPoint(250, 100), -57, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece5, CPoint(400, 100), -228, 1, 1, true, false);
 
-	DrawPuzzlePiece(memDC, m_puzzlePiece9, CPoint(100, 250), 107, 1, 1, true, false);
-	DrawPuzzlePiece(memDC, m_puzzlePiece2, CPoint(250, 250), 58, 1, 1, true, false);
-	DrawPuzzlePiece(memDC, m_puzzlePiece3, CPoint(400, 250), 72, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece9, CPoint(100, 250), -70, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece2, CPoint(250, 250), -40, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece3, CPoint(400, 250), -25, 1, 1, true, false);
 
-	DrawPuzzlePiece(memDC, m_puzzlePiece4, CPoint(100, 400), 18, 1, 1, true, false);
-	DrawPuzzlePiece(memDC, m_puzzlePiece6, CPoint(250, 400), 113, 1, 1, true, false, true);
-	DrawPuzzlePiece(memDC, m_puzzlePiece8, CPoint(400, 400), 161, 1, 1, true, false);
-	// ... repeat for other pieces ...
+	DrawPuzzlePiece(memDC, m_puzzlePiece4, CPoint(100, 400), -95, 1, 1, true, false);
+	DrawPuzzlePiece(memDC, m_puzzlePiece6, CPoint(250, 400), 156, 1, 1, true, false, true);
+	DrawPuzzlePiece(memDC, m_puzzlePiece8, CPoint(400, 400), 200, 1, 1, true, false);
 
-	// Now transfer the memory DC to the screen
 	pDC->BitBlt(0, 0, 500, 500, memDC, 0, 0, SRCCOPY);
 
-	// Clean up
+	pDC->RestoreDC(savedDC);
 	(*memDC).SelectObject(pOldBitmap);
 	bitmap.DeleteObject();
 }

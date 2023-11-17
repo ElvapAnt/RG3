@@ -233,6 +233,15 @@
     <Image Include="res\p7.dib" />
     <Image Include="res\p8.dib" />
     <Image Include="res\p9.dib" />
+    <Image Include="res\pz1.bmp" />
+    <Image Include="res\pz2.bmp" />
+    <Image Include="res\pz3.bmp" />
+    <Image Include="res\pz4.bmp" />
+    <Image Include="res\pz5.bmp" />
+    <Image Include="res\pz6.bmp" />
+    <Image Include="res\pz7.bmp" />
+    <Image Include="res\pz8.bmp" />
+    <Image Include="res\pz9.bmp" />
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
